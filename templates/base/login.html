@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>DEMS - Iniciar Sesion</title>
+</head>
+<body>
+	<h1>Iniciar Sesion</h1>
+	<form action="{% url 'base:login' %}" method="POST">
+		{% csrf_token %}
+		<divd>
+			<label>Nombre de Usuario</label>
+			<input type="text" name="username">
+		</div>
+		<div>
+			<label>Contraseña</label>
+			<input type="password" name="password">
+		</div>
+		<div>
+			{% if er %}
+			<span style="color: red; font-weight: bold;">Error: {{ er }}</span>
+			{% endif %}
+		</div>
+		<button type="submit">Ingresar</button>
+	</form>
+</body>
+</html>

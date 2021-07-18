@@ -1,0 +1,12 @@
+{% extends "./index.html" %}
+
+{% block content %}
+<h2>Lista de grados</h2>
+<ul>
+	{% for obj in object_list %}
+	<li>
+		<a href="{% url 'intranet:dc_grado_detail' obj.grade.pk %}">{{ obj.grade.name }} Grado</a>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

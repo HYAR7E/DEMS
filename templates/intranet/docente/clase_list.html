@@ -1,0 +1,27 @@
+{% extends "./index.html" %}
+
+{% block content %}
+<h2>Horario</h2>
+<table border="1px solid black">
+	<tr>
+		<td></td>
+		<td>Lunes</td>
+		<td>Martes</td>
+		<td>Miercoles</td>
+		<td>Jueves</td>
+		<td>Viernes</td>
+	</tr>
+	{% for sch in schedules %}
+	<tr>
+		<td colspan="6">{{sch.grade}} Grado Seccion {{sch.section}}</td>
+	</tr>
+	{% for row in sch.schedule %}
+	<tr>
+		{% for r in row %}
+		<td>{{r}}</td>
+		{% endfor %}
+	</tr>
+	{% endfor %}
+	{% endfor %}
+</table>
+{% endblock %}

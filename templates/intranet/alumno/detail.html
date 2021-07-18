@@ -1,0 +1,79 @@
+{% extends "../docente/index.html" %}
+
+{% block content %}
+<h2>{{student.meta.fullname}}</h2>
+<hr>
+<div>
+	<h3>Registro de Notas</h3>
+	<table border="1px solid black">
+		<tr>
+			<td>Curso</td>
+			<td>Competencia</td>
+			<td>1er Trimestre</td>
+			<td>2do Trimestre</td>
+			<td>3er Trimestre</td>
+			<td>Promedio Competencia</td>
+			<td>Promedio Curso</td>
+		</tr>
+		{% for c in courses %}
+			{% for comp in c.competencias %}
+			<tr>
+				<td>{{ c.name }}</td>
+				<td>{{ comp.name }}</td>
+				{% for tr in comp.trimester %}
+				<td>{{ tr.nota }}</td>
+				{% endfor %}
+				<td>{{ comp.prom|floatformat }}</td>
+				<td>{{ c.prom|floatformat }}</td>
+			</tr>
+			{% endfor %}
+		{% endfor %}
+	</table>
+</div>
+<hr>
+<div>
+	<h3>Registro de Asistencia</h3>
+	<h4>1er Trimestre</h4>
+	<table border="1px solid black">
+		<tr>
+			{% for a in attendances1 %}
+			<td>{{a.dt|date:"d/m"}}</td>
+			{% endfor %}
+		</tr>
+		<tr>
+			{% for a in attendances1 %}
+			<td>{% if a.status %}X{% endif %}</td>
+			{% endfor %}
+		</tr>
+	</table>
+
+	<h4>2do Trimestre</h4>
+	<table border="1px solid black">
+		<tr>
+			{% for a in attendances2 %}
+			<td>{{a.dt|date:"d/m"}}</td>
+			{% endfor %}
+		</tr>
+		<tr>
+			{% for a in attendances2 %}
+			<td>{% if a.status %}X{% endif %}</td>
+			{% endfor %}
+		</tr>
+	</table>
+
+	<h4>3er Trimestre</h4>
+	<table border="1px solid black">
+		<tr>
+			{% for a in attendances3 %}
+			<td>{{a.dt|date:"d/m"}}</td>
+			{% endfor %}
+		</tr>
+		<tr>
+			{% for a in attendances3 %}
+			<td>{% if a.status %}X{% endif %}</td>
+			{% endfor %}
+		</tr>
+	</table>
+</div>
+<hr>
+{% endblock %}

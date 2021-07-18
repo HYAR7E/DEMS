@@ -1,0 +1,29 @@
+{% extends "./index.html" %}
+
+{% block content %}
+<h2>Lista de alumnos bajo el cargo del docente</h2>
+<div>
+	<h3>Registro de Notas</h3>
+	<table border="1px solid black">
+		<tr>
+			<td>Alumno</td>
+			{% for c in courses %}
+			<td>{{ c.name }}</td>
+			{% endfor %}
+		</tr>
+		{% for s in students %}
+		<tr>
+			<td>
+				<a href="{% url 'intranet:st_detail' s.pk %}">{{ s.fullname }}</a>
+			</td>
+			{% for c in s.courses %}
+			<td>{{ c.prom|floatformat }}</td>
+			{% endfor %}
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+<ul>
+</ul>
+{% endblock %}

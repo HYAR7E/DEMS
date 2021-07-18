@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{% block title %}DEMS{% endblock %}</title>
+</head>
+<body>
+	{% block header %}
+	{% endblock %}
+
+	{% block wraper %}
+	{% endblock %}
+
+	{% block footer %}
+	<footer>
+		<div>
+			<li><a href="{% url 'intranet:logout' %}">Cerrar sesion</a></li>
+		</div>
+	</footer>
+	{% endblock %}
+</body>
+</html>

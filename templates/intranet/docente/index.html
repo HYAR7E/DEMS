@@ -1,0 +1,26 @@
+{% extends "../base.html" %}
+
+{% block title %}Intranet Docente{% endblock %}
+
+{% block header %}
+<h1>Colegio {{school.name}} {{school.ugel_num}}</h1>
+{% endblock %}
+
+{% block wraper %}
+<div>
+	<h2>Intranet Docente</h2>
+
+	{% block content %}
+	{% endblock %}
+
+	<div>
+		<h3>Acciones</h3>
+		<ul>
+			<li><a href="{% url 'intranet:dc_grados' %}">Mis Grados</a></li>
+			<li><a href="{% url 'intranet:dc_registroalumnos' %}">Registro de Alumnos</a></li>
+			<li><a href="{% url 'intranet:dc_clasesschedule' %}">Mi Horario</a></li>
+			<li><a href="{% url 'intranet:dc_capacitaciones' %}">Capacitaciones</a></li>
+		</ul>
+	</div>
+</div>
+{% endblock %}

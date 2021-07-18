@@ -1,0 +1,17 @@
+{% extends "./index.html" %}
+
+{% block content %}
+<h2>Curso: {{course.name}}</h2>
+
+<ul>
+	{% for c in clases_past %}
+	<li>N° {{c.classnumber}}: <a href="{% url 'intranet:dc_class_detail' c.pk %}" style="color: brown">{{c.dt|date:"d/m"}}</a></li>
+	{% endfor %}
+	{% for c in clases_today %}
+	<li>N° {{c.classnumber}}: <a href="{% url 'intranet:dc_class_detail' c.pk %}" style="color: black">{{c.dt|date:"d/m"}}</a></li>
+	{% endfor %}
+	{% for c in clases_future %}
+	<li>N° {{c.classnumber}}: <a href="{% url 'intranet:dc_class_detail' c.pk %}" style="color: blue">{{c.dt|date:"d/m"}}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}

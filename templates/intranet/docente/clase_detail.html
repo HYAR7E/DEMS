@@ -1,0 +1,52 @@
+{% extends "./index.html" %}
+
+{% block content %}
+<h2>N° {{class.classnumber}} - {{class.dt|date:"d/m/y"}}</h2>
+
+
+{% if not class.gdrive_folder_id %}
+<form action="{% url 'intranet:gdrive_create' class.pk %}" method="POST">
+	{% csrf_token %}
+	<button type="submit">Crear Carpeta</button>
+</form>
+{% else %}
+<h3>Archivos</h3>
+<table>
+	<tr>
+		<td>Nombre</td>
+		<td>Tamaño</td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	{% for f in files %}
+	<tr>
+		<td>{{f.name}}</td>
+		<td>{{f.size}} bytes</td>
+		<td>
+			<button>
+				<a href="{{f.webViewLink}}" target="_blank" style="text-decoration: none; color: inherit;">Ver</a>
+			</button>
+		</td>
+		<td>
+			<button>
+				<a href="{{f.webContentLink}}" target="_blank" style="text-decoration: none; color: inherit;">Descargar</a>
+			</button>
+		</td>
+		<td>
+			<form action="{% url 'intranet:gdrive_delete' class.pk %}" method="POST">{% csrf_token %}
+				<input type="text" name="file_id" value="{{f.id}}" style="display: none;">
+				<button type="submit">Eliminar</button>
+			</form>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+<form action="{% url 'intranet:gdrive_upload' class.pk %}" method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<label>Archivo: </label><input type="file" name="file">
+	<button type="submit">Subir Archivo</button>
+</form>
+{% endif %}
+
+{% endblock %}
