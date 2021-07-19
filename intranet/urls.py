@@ -30,4 +30,5 @@ urlpatterns = [
 	path('_/noview/gdrive/create/class/<int:pk>/', views.gdrive_create, name="gdrive_create"),
 	path('_/noview/gdrive/upload/class/<int:pk>/', views.gdrive_upload, name="gdrive_upload"),
 	path('_/noview/gdrive/delete/class/<int:pk>/', views.gdrive_delete, name="gdrive_delete"),
+	path('_/noview/excel/student/<int:student_pk>/', views.ReporteComprobantes, name="report_student"),
 ]

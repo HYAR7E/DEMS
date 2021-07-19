@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect as HttpRD
+from django.http import HttpResponse, HttpResponseRedirect as HttpRD, Http404
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib.auth import logout
@@ -10,8 +10,10 @@ import datetime as dt
 from siteadmin.models import *
 from .models import *
 from .utils import GAPIDRIVE
+from openpyxl import Workbook, load_workbook
 
 DRIVE_DIR = str(settings.BASE_DIR)+str(settings.STATIC_URL)+'gdrive/'
+EXCEL_DIR = str(settings.BASE_DIR)+str(settings.STATIC_URL)+'excel/'
 
 
 def index(req):
@@ -234,7 +236,74 @@ class StudentDetail(generic.DetailView):
 		return ctx
 
 
-pass
+""" REPORTE EXCEL """
+
+def ReporteComprobantes(request, student_pk):
+	from django.db.models import Avg
+	libro = Workbook()
+	libro = load_workbook(EXCEL_DIR+"template_reporte_notas_asistencia.xlsx")
+	try:
+		student = Student.objects.get(pk=student_pk)
+	except:
+		return Http404("Alumno no encontrado")
+	# Notas
+	dt_year = 2021
+	h1 = libro.get_sheet_by_name("NOTAS")
+	h1.cell(row=2, column=2).value = 'REGISTRO DE NOTAS - %s'%dt_year
+	h1.cell(row=3, column=2).value = student.meta.fullname
+	y = 5
+	merge_o = 0
+	for c in Course.objects.all():
+		merge_o = y+1
+		for cxc in CompetenciaXCurso.objects.filter(course=c):
+			y += 1
+			nxts = NotaXTrimester.objects.filter(competencia=cxc, student=student.pk, sc_trimester__sc_year__dt_year__year=dt_year)
+			proms = nxts.values('student', 'competencia').annotate(promedio=Avg('nota'))
+
+			h1.cell(row=y, column=3).value = cxc.competencia
+			h1.cell(row=y, column=4).value = round(nxts[0].nota, 1)
+			h1.cell(row=y, column=5).value = round(nxts[1].nota, 1)
+			h1.cell(row=y, column=6).value = round(nxts[2].nota, 1)
+			h1.cell(row=y, column=7).value = round(proms[0].get('promedio'), 1)
+		c_prom = NotaXTrimester.objects\
+			.filter(competencia__course=c, student=student.pk, sc_trimester__sc_year__dt_year__year=dt_year)\
+			.values('student', 'competencia__course')\
+			.annotate(promedio=Avg('nota'))[0].get("promedio")
+
+		h1.cell(row=merge_o, column=2).value = c.name
+		h1.cell(row=merge_o, column=8).value = round(c_prom, 1)
+		h1.merge_cells(start_row=merge_o, start_column=2, end_row=y, end_column=2)
+		h1.merge_cells(start_row=merge_o, start_column=8, end_row=y, end_column=8)
+
+	# Attendance
+	h2 = libro.get_sheet_by_name("ASISTENCIA")
+	h2.cell(row=2, column=2).value = 'REGISTRO DE ASISTENCIA - %s'%dt_year
+	h2.cell(row=3, column=2).value = student.meta.fullname
+
+	atts = Attendance.objects.filter(student=student.pk, sc_trimester__sc_year__dt_year__year=2021)
+	x = 2
+	for at in atts.filter(sc_trimester__order=1):
+		x += 1
+		h2.cell(row=5, column=x).value = at.dt.strftime('%d-%m-%Y')
+		h2.cell(row=6, column=x).value = "ASISTIO" if at.status else "FALTO"
+	x = 2
+	for at in atts.filter(sc_trimester__order=2):
+		x += 1
+		h2.cell(row=7, column=x).value = at.dt.strftime('%d-%m-%Y')
+		h2.cell(row=8, column=x).value = "ASISTIO" if at.status else "FALTO"
+
+	x = 2
+	for at in atts.filter(sc_trimester__order=3):
+		x += 1
+		h2.cell(row=9, column=x).value = at.dt.strftime('%d-%m-%Y')
+		h2.cell(row=10, column=x).value = "ASISTIO" if at.status else "FALTO"
+
+
+	# Armar respuesta http
+	response = HttpResponse(content_type='application/vnd.ms-excel')
+	response['Content-Disposition'] = 'attachment; filename=reporte_notas_y_asistencia.xls'
+	libro.save(response)
+	return response
 
 
 """ Helpers """
