@@ -18,11 +18,11 @@ urlpatterns = [
 	path('docente/class/<int:pk>/', views.TeacherClassDetail.as_view(), name="dc_class_detail"),
 
 	# Student
-
 	# Admin
 
 	# Terceros
 	path('docente/<int:pk>/', views.TeacherDetail.as_view(), name="tc_detail"),
+	path('alumno/cursos/', views.StudentCursoDetail.as_view(), name="st_view"),
 	path('alumno/<int:pk>/', views.StudentDetail.as_view(), name="st_detail"),
 
 	# Extra

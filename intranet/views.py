@@ -36,7 +36,8 @@ def index(req):
 @login_required
 def alumno(req):
 	sxu = SchoolXUser.objects.get(user=req.user)
-	ctx = {'school': sxu.school}
+	st = Student.objects.get(user=req.user)
+	ctx = {'school': sxu.school, 'student': st}
 	return render(req, 'intranet/alumno/index.html', ctx)
 
 
@@ -233,6 +234,24 @@ class StudentDetail(generic.DetailView):
 		ctx.update({'attendances1': atts.filter(sc_trimester__order=1)})
 		ctx.update({'attendances2': atts.filter(sc_trimester__order=2)})
 		ctx.update({'attendances3': atts.filter(sc_trimester__order=3)})
+		return ctx
+
+
+class StudentCursoDetail(generic.DetailView):
+	model = Student
+	template_name = "intranet/alumno/curso_list.html"
+	context_object_name = 'student'
+
+	def get_object(self, **kwargs):
+		return Student.objects.get(user=self.request.user)
+
+	def get_context_data(self, **kwargs):
+		ctx = super().get_context_data(**kwargs)
+		student = ctx.get("student")
+		sxgxs = StudentXGradeXSection.objects.get(student=student)
+		courses = Course.objects.all()
+		ctx.update({"courses": courses, "grade": sxgxs.grade})
+		print(ctx)
 		return ctx
 
 

@@ -8,6 +8,16 @@
 <div>
 	<h2>Intranet Alumno</h2>
 
+	{% block content %}
+	<ul>
+		{% for c in courses %}
+		<li>
+			<a href="{% url 'intranet:dc_gradocurso_detail' grade.pk c.pk %}">{{ c.name }}</a>
+		</li>
+		{% endfor %}
+	</ul>
+	{% endblock %}
+
 	<div>
 		<h3>Acciones</h3>
 		<ul>
